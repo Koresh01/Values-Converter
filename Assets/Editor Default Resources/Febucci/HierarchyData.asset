@@ -17,9 +17,9 @@ MonoBehaviour:
     enabled: 1
     aligned: 0
     pairs:
-    - iconToDraw: {fileID: 0}
+    - iconToDraw: {fileID: 2800000, guid: c436c1a0758103149a877eccce9e50b5, type: 3}
       targetClasses:
-      - {fileID: 0}
+      - {fileID: 11500000, guid: 39371613540dd2e469e1118175cd0644, type: 3}
   prefabsData:
     enabled: 1
     prefabs: []
