@@ -26,6 +26,9 @@ MonoBehaviour:
     - iconToDraw: {fileID: 2800000, guid: 8a89c907c781b2244ad190f050887c49, type: 3}
       targetClasses:
       - {fileID: 11500000, guid: ae9101c26f1f41c4f96086d2bb34a0df, type: 3}
+    - iconToDraw: {fileID: 2800000, guid: 135d77ef0d3ed144d94f6cd59b63ab41, type: 3}
+      targetClasses:
+      - {fileID: 11500000, guid: 47aab109def60044d99d4ccd2519980f, type: 3}
   prefabsData:
     enabled: 1
     prefabs: []
