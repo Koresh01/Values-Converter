@@ -4,7 +4,7 @@ using TMPro;
 /// <summary>
 /// UI-строка с названием и полем ввода единицы.
 /// </summary>
-public class UnitRowUI : MonoBehaviour
+public class TemperatureRowUI : MonoBehaviour
 {
     [Header("UI Компоненты:")]
     public TMP_InputField inputField;

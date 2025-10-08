@@ -6,13 +6,13 @@ using UnityEngine;
 /// </summary>
 public class TemperatureConverter : MonoBehaviour
 {
-    public List<UnitRowUI> temperatureUIList = new List<UnitRowUI>();
+    public List<TemperatureRowUI> temperatureUIList = new List<TemperatureRowUI>();
     private bool isUpdating = false; // защита от рекурсии при обновлении полей
 
     /// <summary>
     /// Вызывается, когда пользователь меняет значение в одном из полей.
     /// </summary>
-    public void OnTemperatureChanged(UnitRowUI sourceUI, string newValue)
+    public void OnTemperatureChanged(TemperatureRowUI sourceUI, string newValue)
     {
         if (isUpdating) return; // уже идёт пересчёт
         if (!double.TryParse(newValue, out double value)) return; // не число — выходим
@@ -25,7 +25,7 @@ public class TemperatureConverter : MonoBehaviour
         {
             if (ui == sourceUI) continue; // пропускаем поле-источник
             double converted = FromCelsius(celsius, ui.unitType); // пересчёт
-            ui.inputField.text = converted.ToString("F2"); // обновляем текст
+            ui.inputField.text = converted.ToString("0.####");  // обновляем текст
         }
         isUpdating = false;
     }
