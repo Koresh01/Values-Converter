@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using TMPro;
-using UnityEditor.SearchService;
 
 /// <summary>
 /// UI-строка с названием и полем ввода единицы.
