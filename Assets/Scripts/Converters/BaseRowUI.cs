@@ -1,15 +1,15 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 
-public class BaseRowUI<TUnit, TConverter, TRowUI> : MonoBehaviour
-    where TConverter : BaseConverter<TUnit, TRowUI>
-    where TRowUI : BaseRowUI<TUnit, TConverter, TRowUI>
+public class BaseRowUI<TUnit, TConverter, TRowUI> : MonoBehaviour   // Я — базовый класс для UI-строки. У меня есть три шаблонных типа: единица измерения, конвертер и сама строка UI.
+    where TConverter : BaseConverter<TUnit, TRowUI> // Тип, который ты подставишь вместо TConverter, обязан быть наследником класса BaseConverter<TUnit, TRowUI>
+    where TRowUI : BaseRowUI<TUnit, TConverter, TRowUI> // Тип, который ты подставишь как TRowUI, обязан быть наследником самого BaseRowUI, но уже со своими конкретными типами внутри.
 {
-    [Header("UI ����������:")]
+    [Header("UI Компоненты:")]
     public TMP_InputField inputField;
     public TMP_Text label;
 
-    [Header("���������:")]
+    [Header("Настройки:")]
     public TUnit unitType;
 
     private TConverter converter;

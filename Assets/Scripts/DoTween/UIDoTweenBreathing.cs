@@ -1,17 +1,17 @@
-using UnityEngine;
+п»їusing UnityEngine;
 using DG.Tweening;
 
 [RequireComponent(typeof(RectTransform))]
 public class UIDoTweenBreathing : MonoBehaviour
 {
-    [Header("Настройки анимации")]
-    [Tooltip("Множитель увеличения (1 = без изменений, 1.1 = увеличение на 10%)")]
+    [Header("РќР°СЃС‚СЂРѕР№РєРё Р°РЅРёРјР°С†РёРё")]
+    [Tooltip("РњРЅРѕР¶РёС‚РµР»СЊ СѓРІРµР»РёС‡РµРЅРёСЏ (1 = Р±РµР· РёР·РјРµРЅРµРЅРёР№, 1.1 = СѓРІРµР»РёС‡РµРЅРёРµ РЅР° 10%)")]
     [Range(1f, 2f)] public float scaleMultiplier = 1.1f;
 
-    [Tooltip("Время полного цикла (увеличение + уменьшение) в секундах")]
+    [Tooltip("Р’СЂРµРјСЏ РїРѕР»РЅРѕРіРѕ С†РёРєР»Р° (СѓРІРµР»РёС‡РµРЅРёРµ + СѓРјРµРЅСЊС€РµРЅРёРµ) РІ СЃРµРєСѓРЅРґР°С…")]
     public float duration = 1.5f;
 
-    [Tooltip("Тип плавности анимации")]
+    [Tooltip("РўРёРї РїР»Р°РІРЅРѕСЃС‚Рё Р°РЅРёРјР°С†РёРё")]
     public Ease easeType = Ease.InOutSine;
 
     private RectTransform rectTransform;
@@ -34,16 +34,16 @@ public class UIDoTweenBreathing : MonoBehaviour
 
     private void StartBreathing()
     {
-        // На всякий случай убиваем старую анимацию
+        // РќР° РІСЃСЏРєРёР№ СЃР»СѓС‡Р°Р№ СѓР±РёРІР°РµРј СЃС‚Р°СЂСѓСЋ Р°РЅРёРјР°С†РёСЋ
         breathingTween?.Kill();
 
-        // Сохраняем исходный масштаб
+        // РЎРѕС…СЂР°РЅСЏРµРј РёСЃС…РѕРґРЅС‹Р№ РјР°СЃС€С‚Р°Р±
         Vector3 originalScale = rectTransform.localScale;
 
-        // Создаём анимацию “вдох-выдох”
+        // РЎРѕР·РґР°С‘Рј Р°РЅРёРјР°С†РёСЋ вЂњРІРґРѕС…-РІС‹РґРѕС…вЂќ
         breathingTween = rectTransform.DOScale(originalScale * scaleMultiplier, duration / 2f)
             .SetEase(easeType)
-            .SetLoops(-1, LoopType.Yoyo); // бесконечно туда-сюда
+            .SetLoops(-1, LoopType.Yoyo); // Р±РµСЃРєРѕРЅРµС‡РЅРѕ С‚СѓРґР°-СЃСЋРґР°
     }
 
     private void StopBreathing()
