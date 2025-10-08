@@ -7,30 +7,53 @@ public class PageManager : MonoBehaviour
     [System.Serializable]
     public class Page
     {
-        public string id;              // например "Main", "Length", "Weight"
-        public RectTransform panel;    // сам объект страницы
+        public string id;              // Уникальный идентификатор страницы (например: "Main", "Settings", "Help")
+        public RectTransform panel;    // Панель (UI-объект) этой страницы
     }
 
-    [Header("Pages")]
-    public List<Page> pages = new List<Page>();
+    [Header("Ссылки:")]
+    [SerializeField] private RectTransform canvasRect; // Ссылка на Canvas (устанавливается через инспектор)
 
-    [Header("Transition Settings")]
-    public float transitionDuration = 0.5f;
-    public Ease transitionEase = Ease.InOutQuad;
+    [Header("Страницы")]
+    [SerializeField] private List<Page> pages = new List<Page>();
 
-    
+    [Header("Перелистывание страниц:")]
+    [SerializeField] private float transitionDuration = 0.5f;
+    [SerializeField] private Ease transitionEase = Ease.InOutQuad;
+
     private Page currentPage;
+    private float panelWidth;
 
-    void Start()
+    private void Start()
     {
-        // Находим и показываем первую страницу
-        currentPage = pages[0];
-        foreach (var p in pages)
-            p.panel.gameObject.SetActive(p == currentPage);
+        InitializeFirstPage();
     }
 
-    public void ShowPage(string pageId)
+    /// <summary>
+    /// Активирует первую страницу и скрывает остальные.
+    /// </summary>
+    private void InitializeFirstPage()
     {
+        if (pages.Count == 0)
+        {
+            Debug.LogError("No pages assigned in PageManager!");
+            return;
+        }
+
+        currentPage = pages[0];
+
+        foreach (var page in pages)
+            page.panel.gameObject.SetActive(page == currentPage);
+    }
+
+    /// <summary>
+    /// Переключает страницу с анимацией. 
+    /// Direction: 1 — движение вправо, -1 — движение влево.
+    /// </summary>
+    private void ShowPage(string pageId, int direction = 1)
+    {
+        panelWidth = canvasRect.rect.width; // получение ширины экрана
+
         if (pageId == currentPage.id)
             return;
 
@@ -41,21 +64,34 @@ public class PageManager : MonoBehaviour
             return;
         }
 
-        // Сохраняем ссылку на старую страницу
         var previousPage = currentPage;
 
-        // Анимация ухода старой страницы
-        previousPage.panel.DOAnchorPos(new Vector2(-Screen.width, 0), transitionDuration)
+        // Анимация ухода текущей страницы
+        previousPage.panel.DOAnchorPos(new Vector2(-panelWidth * direction, 0), transitionDuration)
             .SetEase(transitionEase)
             .OnComplete(() => previousPage.panel.gameObject.SetActive(false));
 
-        // Анимация прихода новой
+        // Анимация появления новой страницы
+        nextPage.panel.anchoredPosition = new Vector2(panelWidth * direction, 0);
         nextPage.panel.gameObject.SetActive(true);
-        nextPage.panel.anchoredPosition = new Vector2(Screen.width, 0);
         nextPage.panel.DOAnchorPos(Vector2.zero, transitionDuration).SetEase(transitionEase);
 
-        // Обновляем текущую страницу после запуска всех анимаций
         currentPage = nextPage;
     }
 
+    /// <summary>
+    /// Вызывается кнопкой в инспекторе для анимации влево.
+    /// </summary>
+    public void ShowPageLeft(string pageId)
+    {
+        ShowPage(pageId, -1);
+    }
+
+    /// <summary>
+    /// Вызывается кнопкой в инспекторе для анимации вправо.
+    /// </summary>
+    public void ShowPageRight(string pageId)
+    {
+        ShowPage(pageId, 1);
+    }
 }
