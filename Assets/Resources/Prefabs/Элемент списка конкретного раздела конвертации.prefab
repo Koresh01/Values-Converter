@@ -823,5 +823,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   label: {fileID: 4433465090389115583}
   inputField: {fileID: 7448167370730873172}
-  unitName: 
-  formula: 

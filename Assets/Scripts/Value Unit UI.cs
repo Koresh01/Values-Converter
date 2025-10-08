@@ -8,12 +8,11 @@ using TMPro;
 public class ValueUnitUI : MonoBehaviour
 {
     [Header("UI Компоненты:")]
-    public TMP_Text label;
     public TMP_InputField inputField;
+    public TMP_Text label;
 
-    public void Initialize(string name, string formula)
+    public void Initialize(string name)
     {
         label.text = name;
-        inputField.text = "";
     }
 }
