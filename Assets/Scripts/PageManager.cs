@@ -52,10 +52,9 @@ public class PageManager : MonoBehaviour
     /// </summary>
     private void ShowPage(string pageId, int direction = 1)
     {
-        panelWidth = canvasRect.rect.width; // получение ширины экрана
+        panelWidth = canvasRect.rect.width;
 
-        if (pageId == currentPage.id)
-            return;
+        if (pageId == currentPage.id) return;
 
         Page nextPage = pages.Find(p => p.id == pageId);
         if (nextPage == null)
@@ -66,18 +65,31 @@ public class PageManager : MonoBehaviour
 
         var previousPage = currentPage;
 
+        // Прерываем старые анимации
+        previousPage.panel.DOKill();
+        nextPage.panel.DOKill();
+
         // Анимация ухода текущей страницы
-        previousPage.panel.DOAnchorPos(new Vector2(-panelWidth * direction, 0), transitionDuration)
+        previousPage.panel
+            .DOAnchorPos(new Vector2(-panelWidth * direction, 0), transitionDuration)
             .SetEase(transitionEase)
-            .OnComplete(() => previousPage.panel.gameObject.SetActive(false));
+            .OnComplete(() =>
+            {
+                // Проверяем, не активна ли страница снова (на случай повторного вызова)
+                if (previousPage != currentPage)
+                    previousPage.panel.gameObject.SetActive(false);
+            });
 
         // Анимация появления новой страницы
         nextPage.panel.anchoredPosition = new Vector2(panelWidth * direction, 0);
         nextPage.panel.gameObject.SetActive(true);
-        nextPage.panel.DOAnchorPos(Vector2.zero, transitionDuration).SetEase(transitionEase);
+        nextPage.panel
+            .DOAnchorPos(Vector2.zero, transitionDuration)
+            .SetEase(transitionEase);
 
         currentPage = nextPage;
     }
+
 
     /// <summary>
     /// Вызывается кнопкой в инспекторе для анимации влево.
