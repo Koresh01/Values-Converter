@@ -1,19 +1,47 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Класс для перевода единиц ТЕМПЕРАТУРЫ из ЛЮБОЙ в ЛЮБУЮ.
+/// Конвертер температуры между всеми единицами.
 /// </summary>
 public class TemperatureConverter : MonoBehaviour
 {
-    // Функция конвертации из любой единицы в любую
-    public double ConvertTemperature(double value, TemperatureUnit from, TemperatureUnit to)
+    public List<UnitRowUI> temperatureUIList = new List<UnitRowUI>();
+    private bool isUpdating = false; // защита от рекурсии при обновлении полей
+
+    /// <summary>
+    /// Вызывается, когда пользователь меняет значение в одном из полей.
+    /// </summary>
+    public void OnTemperatureChanged(UnitRowUI sourceUI, string newValue)
     {
-        double celsius = ToCelsius(value, from);
-        return FromCelsius(celsius, to);
+        if (isUpdating) return; // уже идёт пересчёт
+        if (!double.TryParse(newValue, out double value)) return; // не число — выходим
+
+        TemperatureUnit fromUnit = sourceUI.unitType;
+        double celsius = ToCelsius(value, fromUnit); // в Цельсий
+
+        isUpdating = true;
+        foreach (var ui in temperatureUIList)
+        {
+            if (ui == sourceUI) continue; // пропускаем поле-источник
+            double converted = FromCelsius(celsius, ui.unitType); // пересчёт
+            ui.inputField.text = converted.ToString("F2"); // обновляем текст
+        }
+        isUpdating = false;
     }
 
-    // Перевод в базовую единицу (Цельсий)
+    /// <summary>
+    /// Перевод из одной единицы в другую.
+    /// </summary>
+    public double ConvertTemperature(double value, TemperatureUnit from, TemperatureUnit to)
+    {
+        return FromCelsius(ToCelsius(value, from), to);
+    }
+
+    /// <summary>
+    /// В Цельсий.
+    /// </summary>
     private double ToCelsius(double value, TemperatureUnit from)
     {
         return from switch
@@ -26,7 +54,9 @@ public class TemperatureConverter : MonoBehaviour
         };
     }
 
-    // Перевод из базовой единицы (Цельсий) в целевую
+    /// <summary>
+    /// Из Цельсия.
+    /// </summary>
     private double FromCelsius(double value, TemperatureUnit to)
     {
         return to switch
