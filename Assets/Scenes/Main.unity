@@ -12262,6 +12262,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eea332583612cf3408f571f0c3ef09c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bannerSize: 4
+  adPosition: 8
+  adUnitId: R-M-17451695-1
 --- !u!4 &543334513
 Transform:
   m_ObjectHideFlags: 0
@@ -39236,13 +39239,13 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 371643555}
+  - {fileID: 543334513}
   - {fileID: 1679442795}
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1050927048}
-  - {fileID: 371643555}
-  - {fileID: 543334513}
   - {fileID: 1538762441}
   - {fileID: 1272305709}
   - {fileID: 1378421888}

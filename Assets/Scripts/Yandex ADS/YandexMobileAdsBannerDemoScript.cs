@@ -1,22 +1,14 @@
-/*
- * This file is a part of the Yandex Advertising Network
- *
- * Version for Android (C) 2023 YANDEX
- *
- * You may not use this file except in compliance with the License.
- * You may obtain a copy of the License at https://legal.yandex.com/partner_ch/
- */
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 using YandexMobileAds;
 using YandexMobileAds.Base;
 
 public class YandexMobileAdsBannerDemoScript : MonoBehaviour
 {
-    private String message = "";
+    [Header("Настройки баннера")]
+    [SerializeField] private BannerSizeType bannerSize = BannerSizeType.Banner320x50;
+    [SerializeField] private AdPosition adPosition = AdPosition.TopCenter;
+    [SerializeField] private string adUnitId = "demo-banner-yandex"; // ⚠️ Замени на свой ID
 
     private Banner banner;
 
@@ -27,90 +19,69 @@ public class YandexMobileAdsBannerDemoScript : MonoBehaviour
 
     private void RequestBanner()
     {
-
-        //Sets COPPA restriction for user age under 13
         MobileAds.SetAgeRestrictedUser(true);
 
-        // Replace demo Unit ID 'demo-banner-yandex' with actual Ad Unit ID
-        string adUnitId = "R-M-17451695-1";
+        if (banner != null)
+            banner.Destroy();
 
-        if (this.banner != null)
-        {
-            this.banner.Destroy();
-        }
-        // Set sticky banner width
-        BannerAdSize bannerSize = BannerAdSize.StickySize(GetScreenWidthDp());
-        // Or set inline banner maximum width and height
-        // BannerAdSize bannerSize = BannerAdSize.InlineSize(GetScreenWidthDp(), 300);
-        this.banner = new Banner(adUnitId, bannerSize, AdPosition.BottomCenter);
+        // Преобразуем выбранный enum в конкретный размер
+        BannerAdSize bannerAdSize = GetBannerAdSize(bannerSize);
+        banner = new Banner(adUnitId, bannerAdSize, adPosition);
 
-        this.banner.OnAdLoaded += this.HandleAdLoaded;
-        this.banner.OnAdFailedToLoad += this.HandleAdFailedToLoad;
-        this.banner.OnReturnedToApplication += this.HandleReturnedToApplication;
-        this.banner.OnLeftApplication += this.HandleLeftApplication;
-        this.banner.OnAdClicked += this.HandleAdClicked;
-        this.banner.OnImpression += this.HandleImpression;
+        banner.OnAdLoaded += HandleAdLoaded;
+        banner.OnAdFailedToLoad += HandleAdFailedToLoad;
 
-        this.banner.LoadAd(this.CreateAdRequest());
-        this.DisplayMessage("Banner is requested");
+        banner.LoadAd(CreateAdRequest());
+        Debug.Log($"Yandex Banner: запрошен баннер ({bannerSize})");
     }
 
-    // Example how to get screen width for request
+    private AdRequest CreateAdRequest() => new AdRequest.Builder().Build();
+
+    private void HandleAdLoaded(object sender, EventArgs args)
+    {
+        Debug.Log("Yandex Banner: баннер загружен");
+        banner.Show();
+    }
+
+    private void HandleAdFailedToLoad(object sender, AdFailureEventArgs args)
+    {
+        Debug.LogWarning("Yandex Banner: ошибка загрузки — " + args.Message);
+    }
+
+    private BannerAdSize GetBannerAdSize(BannerSizeType type)
+    {
+        switch (type)
+        {
+            case BannerSizeType.Banner320x50:
+                return BannerAdSize.FixedSize(320, 50);
+            case BannerSizeType.Banner300x250:
+                return BannerAdSize.FixedSize(300, 250);
+            case BannerSizeType.Banner728x90:
+                return BannerAdSize.FixedSize(728, 90);
+            case BannerSizeType.InlineAdaptive:
+                return BannerAdSize.InlineSize(GetScreenWidthDp(), 100);
+            case BannerSizeType.StickyAdaptive:
+                return BannerAdSize.StickySize(GetScreenWidthDp());
+            default:
+                return BannerAdSize.FixedSize(320, 50);
+        }
+    }
+
     private int GetScreenWidthDp()
     {
         int screenWidth = (int)Screen.safeArea.width;
         return ScreenUtils.ConvertPixelsToDp(screenWidth);
     }
+}
 
-    private AdRequest CreateAdRequest()
-    {
-        return new AdRequest.Builder().Build();
-    }
-
-    private void DisplayMessage(String message)
-    {
-        this.message = message + (this.message.Length == 0 ? "" : "\n--------\n" + this.message);
-        MonoBehaviour.print(message);
-    }
-
-    #region Banner callback handlers
-
-    public void HandleAdLoaded(object sender, EventArgs args)
-    {
-        this.DisplayMessage("HandleAdLoaded event received");
-        this.banner.Show();
-    }
-
-    public void HandleAdFailedToLoad(object sender, AdFailureEventArgs args)
-    {
-        this.DisplayMessage("HandleAdFailedToLoad event received with message: " + args.Message);
-    }
-
-    public void HandleLeftApplication(object sender, EventArgs args)
-    {
-        this.DisplayMessage("HandleLeftApplication event received");
-    }
-
-    public void HandleReturnedToApplication(object sender, EventArgs args)
-    {
-        this.DisplayMessage("HandleReturnedToApplication event received");
-    }
-
-    public void HandleAdLeftApplication(object sender, EventArgs args)
-    {
-        this.DisplayMessage("HandleAdLeftApplication event received");
-    }
-
-    public void HandleAdClicked(object sender, EventArgs args)
-    {
-        this.DisplayMessage("HandleAdClicked event received");
-    }
-
-    public void HandleImpression(object sender, ImpressionData impressionData)
-    {
-        var data = impressionData == null ? "null" : impressionData.rawData;
-        this.DisplayMessage("HandleImpression event received with data: " + data);
-    }
-
-    #endregion
+/// <summary>
+/// Возможные размеры баннеров (удобно выбирать в Unity Inspector)
+/// </summary>
+public enum BannerSizeType
+{
+    Banner320x50,
+    Banner300x250,
+    Banner728x90,
+    InlineAdaptive,
+    StickyAdaptive
 }
